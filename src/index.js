@@ -27,7 +27,10 @@ class App extends Component {
       listItems: [...this.state.listItems, this.state.value],
       value: '',
     });
+<<<<<<< HEAD
     console.log('submit', this.state);
+=======
+>>>>>>> 20b3b9161e2e77f4d2c2651df82c346eb953e81c
   };
 
   render() {
