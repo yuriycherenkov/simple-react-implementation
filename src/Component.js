@@ -6,15 +6,10 @@ export const parseVDom = (obj) => {
   const element = document.createElement(obj.type);
   element.id = obj.id;
 
-  // console.log(obj);
-
-<<<<<<< HEAD
-=======
   if (obj.type === 'text') {
     element.innerHTML = obj.type;
   }
 
->>>>>>> 20b3b9161e2e77f4d2c2651df82c346eb953e81c
   if (!Array.isArray(obj)) {
     Object.keys(obj.props).map((key) => {
       if (key === 'text') {
@@ -24,13 +19,10 @@ export const parseVDom = (obj) => {
         element.addEventListener('keyup', obj.props[key]);
       }
 
-<<<<<<< HEAD
       if (key === 'value') {
         element.value = obj.props[key];
       }
 
-=======
->>>>>>> 20b3b9161e2e77f4d2c2651df82c346eb953e81c
       if (key === 'onClick') {
         element.addEventListener('click', obj.props[key]);
       }
@@ -45,10 +37,7 @@ export const parseVDom = (obj) => {
     // obj.children.map(child => {
     //   parseVDom(child);
     // });
-<<<<<<< HEAD
 
-=======
->>>>>>> 20b3b9161e2e77f4d2c2651df82c346eb953e81c
     obj.children
       .map(parseVDom)
       .forEach(element.appendChild.bind(element));
