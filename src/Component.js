@@ -67,9 +67,10 @@ export default class SimpleComponent {
 
   setState = (newState) => {
     const entryPoint = document.getElementById(this.id);
-    render(this, entryPoint);
+    const newChangedState = Object.keys(newState).map(key => (this.state[key] = newState[key]));
 
-    return Object.keys(newState).map(key => (this.state[key] = newState[key]));
+    render(this, entryPoint);
+    return newChangedState;
   }
 
   onClick = (event) => {
