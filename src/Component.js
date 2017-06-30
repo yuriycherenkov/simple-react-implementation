@@ -8,10 +8,6 @@ export const parseVDom = (obj) => {
 
   // console.log(obj);
 
-  if (obj.type === 'text') {
-    element.innerHTML = obj.type;
-  }
-
   if (!Array.isArray(obj)) {
     Object.keys(obj.props).map((key) => {
       if (key === 'text') {
@@ -19,6 +15,10 @@ export const parseVDom = (obj) => {
       }
       if (key === 'onChange') {
         element.addEventListener('keyup', obj.props[key]);
+      }
+
+      if (key === 'value') {
+        element.value = obj.props[key];
       }
 
       if (key === 'onClick') {
@@ -35,6 +35,7 @@ export const parseVDom = (obj) => {
     // obj.children.map(child => {
     //   parseVDom(child);
     // });
+
     obj.children
       .map(parseVDom)
       .forEach(element.appendChild.bind(element));
