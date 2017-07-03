@@ -8,6 +8,7 @@
     "babel-eslint": "6",
     "draft-js": "^0.10.1",
     "font-awesome": "^4.7.0",
+    "lodash": "^4.17.4",
     "npm-font-open-sans": "^1.0.3",
     "uniqid": "^4.1.1"
   },

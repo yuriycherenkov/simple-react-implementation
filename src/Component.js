@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { render } from './render';
 
 export const parseVDom = (obj) => {
@@ -27,9 +28,12 @@ export const parseVDom = (obj) => {
       return key;
     });
 
-    obj.children
+    if (obj.children) {
+     // console.log('obj.children ', obj.children);
+      obj.children
       .map(parseVDom)
       .forEach(element.appendChild.bind(element));
+    }
   } else {
     obj
       .map(parseVDom)
@@ -55,7 +59,7 @@ export default class SimpleComponent {
     const entryPoint = document.getElementById(this.props.id);
 
     if (this.shouldComponentUpdate(newState)) {
-      const newChangedState = Object.keys(newState).map(key => (this.state[key] = newState[key]));
+      const newChangedState = _.merge(this.state, newState);
 
       render(this, entryPoint);
       return newChangedState;

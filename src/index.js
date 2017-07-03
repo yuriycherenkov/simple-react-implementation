@@ -57,6 +57,5 @@ class App extends Component {
 }
 
 const appRoot = document.getElementById('root');
-
-render(App, appRoot);
+render(React.createElement(App), appRoot);
 
