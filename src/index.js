@@ -7,10 +7,10 @@ import Input from './Components/Input';
 import List from './Components/List';
 
 class App extends Component {
-  constructor(id, props) {
-    super(id, props);
+  constructor(props) {
+    super(props);
     this.state = {
-      value: 'test',
+      value: '',
       listItems: [
         'first',
         'second',
@@ -18,15 +18,22 @@ class App extends Component {
     };
   }
 
+  shouldComponentUpdate(nextState) {
+    // console.log('nextState ', nextState);
+    return true;
+  }
+
   onChange = (value) => {
     this.setState({ value });
   };
 
   onSubmit = () => {
-    this.setState({
-      listItems: [...this.state.listItems, this.state.value],
-      value: '',
-    });
+    if (this.state.value) {
+      this.setState({
+        listItems: [...this.state.listItems, this.state.value],
+        value: '',
+      });
+    }
   };
 
   render() {
@@ -34,8 +41,8 @@ class App extends Component {
       React.createElement('div', { },
         React.createElement(Input,
           { onSubmit: this.onSubmit,
-            value: this.state.value,
             onChange: this.onChange,
+            value: this.state.value,
           }),
         React.createElement(Button, {
           onSubmit: this.onSubmit,

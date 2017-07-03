@@ -1,13 +1,10 @@
 import { render } from './render';
 
-// const fragment = document.createDocumentFragment();
-
 export const parseVDom = (obj) => {
   const element = document.createElement(obj.type);
-  element.id = obj.id;
 
-  if (obj.type === 'text') {
-    element.innerHTML = obj.type;
+  if (obj.id) {
+    element.id = obj.id;
   }
 
   if (!Array.isArray(obj)) {
@@ -17,10 +14,6 @@ export const parseVDom = (obj) => {
       }
       if (key === 'onChange') {
         element.addEventListener('keyup', obj.props[key]);
-      }
-
-      if (key === 'value') {
-        element.value = obj.props[key];
       }
 
       if (key === 'onClick') {
@@ -34,10 +27,6 @@ export const parseVDom = (obj) => {
       return key;
     });
 
-    // obj.children.map(child => {
-    //   parseVDom(child);
-    // });
-
     obj.children
       .map(parseVDom)
       .forEach(element.appendChild.bind(element));
@@ -46,33 +35,32 @@ export const parseVDom = (obj) => {
       .map(parseVDom)
       .forEach(element.appendChild.bind(element));
   }
-
-  // fragment.appendChild(element);
-
-  // obj.children.map(child => {
-  //   console.log(child);
-  //   parseVDom(child);
-  // });
-
-  // console.log(fragment);
-
+  // console.log(element);
   return element;
 };
 
+const currState = {
+  state: null,
+  props: {},
+};
+
 export default class SimpleComponent {
-  constructor(id, props = {}) {
+  constructor(props = {}) {
     this.state = {};
     this.props = props;
-    this.id = id;
-    this.checkToRender();
+    this.shouldComponentUpdate.bind(this);
   }
 
   setState = (newState) => {
-    const entryPoint = document.getElementById(this.id);
-    const newChangedState = Object.keys(newState).map(key => (this.state[key] = newState[key]));
+    const entryPoint = document.getElementById(this.props.id);
 
-    render(this, entryPoint);
-    return newChangedState;
+    if (this.shouldComponentUpdate(newState)) {
+      const newChangedState = Object.keys(newState).map(key => (this.state[key] = newState[key]));
+
+      render(this, entryPoint);
+      return newChangedState;
+    }
+    return this.state;
   }
 
   onClick = (event) => {
@@ -83,15 +71,9 @@ export default class SimpleComponent {
     console.log('onChange', event);
   }
 
-  shouldComponentUpdate = (nextState) => {
+  shouldComponentUpdate() {
     return true;
-  };
-
-  checkToRender = () => {
-    if (this.shouldComponentUpdate()) {
-      // render();
-    }
-  };
+  }
 
   render() {
     return (
