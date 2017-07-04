@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 let VDom = {};
 
 export const render = (Obj, domElement) => {
@@ -28,7 +30,6 @@ export const render = (Obj, domElement) => {
       });
 
       if (obj.children) {
-      // console.log('obj.children ', obj.children);
         obj.children
         .map(parseVDom)
         .forEach(element.appendChild.bind(element));
@@ -42,50 +43,47 @@ export const render = (Obj, domElement) => {
   };
 
   let newObj;
-  const deepEqual = (x, y) => (
-    (x && y && typeof x === 'object' && typeof y === 'object') ?
-      (Object.keys(x).length === Object.keys(y).length) &&
-        Object.keys(x).reduce((isEqual, key) => {
-          if (key === 'props' && !deepEqual(x[key], y[key])) {
-            console.log('props ', deepEqual(x[key], y[key]), 'key: ', key, 'x[key], y[key]: ', x[key], y[key]);
-            if (y[key].value !== x[key].value) {
-              console.log('value: ', y[key].value, 'id: ', y.id, 'obj: ', y[key], 'x', x.id);
-              const oldInput = parseVDom(x);
-              oldInput.value = y[key].value;
-            } // ...title?
+  const deepEqual = (prewObj, currentObj) => {
+    Object.keys(prewObj).forEach((key) => {
+      if (key === 'props') {
+        console.log('props ', key, prewObj[key], currentObj[key]);
+      }
+
+      if (key === 'children') {
+        if (prewObj[key].length === currentObj[key].length) {
+          for (let i = 0; i < prewObj[key].length; i++) { // if length equals
+            deepEqual(prewObj[key][i], currentObj[key][i]);
+            console.log('in loop ', prewObj[key][i]);
           }
-          if (key === 'children') {
-            x[key].map(child => console.log('child x : ', child));
-            y[key].map(child => console.log('child y : ', child));
-            if (x[key].length === y[key].length) {
-              console.log('children x[key], y[key]: ', x[key], y[key]);
-            } else {
-              console.log('children x[key], y[key] length !==', x[key], y[key]);
-            }
-          }
-          return isEqual && deepEqual(x[key], y[key]);
-        }, true) : (x === y)
-  );
+        } else {
+          console.log('prewObj ', prewObj, 'currentObj ', currentObj);
+          const oldElem = document.getElementById(prewObj.id);
+          console.log('newElem ', oldElem);
+          const shouldBeShown = parseVDom(currentObj);
+          domElement.appendChild(shouldBeShown);
+        }
+        console.log(prewObj[key].length, currentObj[key].length);
+      }
+    });
+  };
 
   if (Obj.render) {
-    newObj = Object.assign(Obj.render(), { id: Obj.props.id });
+    // console.log('Obj.render() ', Obj.render(), 'VDom ', VDom);
+    newObj = _.merge(Obj.render(), { id: Obj.props.id });
+    // console.log('VDOM ', VDom, 'newObj ', newObj);
     console.log('/-------------- start -----------------/');
     deepEqual(VDom, newObj);
     console.log('/--------------- end ----------------/');
-    VDom = Object.assign({}, newObj);
    // const shouldBeShown = parseVDom(newObj);
    // console.log(shouldBeShown);
    // domElement.innerHTML = '';
    // domElement.appendChild(shouldBeShown);
+    VDom = _.merge({}, newObj);
   } else {
-    newObj = Object.assign({}, Obj);
-    VDom = Object.assign({}, Obj);
-    // console.log('/------------ start -------------------/');
-    // deepEqual(newObj, VDom);
-    // console.log('/------------- end ------------------/');
+    newObj = _.merge({}, Obj);
+    VDom = _.merge({}, Obj);
+    console.log('Obj ', Obj);
     const shouldBeShown = parseVDom(Obj);
     domElement.appendChild(shouldBeShown);
   }
-
-  // console.log('newObj ', newObj, 'VDOm ', VDom);
 };
