@@ -20,7 +20,7 @@ const handleProps = (obj, element) => {
 
     if (key === 'value') {
       element.setAttribute(key, obj.props[key]);
-      // element.value = obj.props[key];
+      element.value = obj.props[key];
     }
 
     return key;
@@ -51,7 +51,7 @@ export const render = (Obj, domElement) => {
   };
 
   let newObj;
-  const deepEqual = (prewObj, currentObj) => {
+  const deepEqualVDom = (prewObj, currentObj) => {
     Object.keys(prewObj).forEach((key) => {
       if (key === 'props') {
         if (currentObj.id && prewObj.id) {
@@ -68,19 +68,16 @@ export const render = (Obj, domElement) => {
       if (key === 'children') {
         if (prewObj[key].length === currentObj[key].length) {
           for (let i = 0; i < prewObj[key].length; i++) {
-            deepEqual(prewObj[key][i], currentObj[key][i]);
+            deepEqualVDom(prewObj[key][i], currentObj[key][i]);
             if (prewObj[key][i].type === 'input') {
-              // console.log('input prev ', prewObj[key][i], 'curr ', currentObj[key][i]);
               const oldInput = document.getElementById(prewObj[key][i].id);
-              handleProps(currentObj[key][i], oldInput);
-              oldInput.id = currentObj[key][i].id;
+              oldInput.setAttribute('value', currentObj[key][i].props.value);
+              oldInput.value = currentObj[key][i].props.value;
             }
           }
         } else {
-          console.log('prewObj ', prewObj[key], 'currentObj ', currentObj[key]);
           const oldElem = document.getElementById(prewObj.id);
 
-          // parentDiv.replaceChild(sp1, sp2);
           const shouldBeShown = parseVDom(currentObj);
           oldElem.parentNode.replaceChild(shouldBeShown, oldElem);
         }
@@ -90,20 +87,16 @@ export const render = (Obj, domElement) => {
 
   if (Obj.render) {
     newObj = _.merge(Obj.render(), { id: Obj.props.id });
-    // console.log('VDOM ', VDom, 'newObj ', newObj);
     console.log('/-------------- start -----------------/');
-    deepEqual(VDom, newObj);
+    deepEqualVDom(VDom, newObj);
     console.log('/--------------- end ----------------/');
-   // const shouldBeShown = parseVDom(newObj);
-   // console.log(shouldBeShown);
-   // domElement.innerHTML = '';
-   // domElement.appendChild(shouldBeShown);
+
     VDom = _.merge({}, newObj);
   } else {
     newObj = _.merge({}, Obj);
     VDom = _.merge({}, Obj);
-    console.log('Obj ', Obj);
     const shouldBeShown = parseVDom(Obj);
     domElement.appendChild(shouldBeShown);
   }
+  // console.log('VDom ', VDom);
 };
