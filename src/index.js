@@ -7,8 +7,8 @@ import Input from './Components/Input';
 import List from './Components/List';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
+  constructor(props, id) {
+    super(props, id);
     this.state = {
       value: 'test',
       listItems: [

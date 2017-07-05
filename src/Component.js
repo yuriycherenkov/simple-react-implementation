@@ -1,33 +1,32 @@
-import _ from 'lodash';
+import _merge from 'lodash/merge';
 import { render } from './render';
 
 export default class SimpleComponent {
-  constructor(props = {}) {
+  constructor(props = {}, id) {
     this.state = {};
     this.props = props;
+    this.id = id;
     this.shouldComponentUpdate.bind(this);
   }
 
   setState = (newState) => {
-    const entryPoint = document.getElementById(this.props.id);
+    const entryPoint = document.getElementById(this.id);
+    const newChangedState = _merge(this.state, newState);
 
-    if (this.shouldComponentUpdate(newState)) {
-      const newChangedState = _.merge(this.state, newState);
-
+    if (this.render) {
+      const newObj = _merge(this.render(), { id: this.id });
+      render(newObj, entryPoint);
+    } else {
       render(this, entryPoint);
-      return newChangedState;
     }
-    return this.state;
+
+    return newChangedState;
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
-  render() {
-    return (
-      console.log('render simple component')
-    );
-  }
+  render() {}
 }
 

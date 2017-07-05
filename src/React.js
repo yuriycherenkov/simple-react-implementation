@@ -1,12 +1,10 @@
 import * as helpers from './helpers';
 
-class React {
-  createElement = (type, props = {}, ...children) => {
-    if (helpers.isClass(type)) {
+export default {
+  createElement: (type, props = {}, ...children) => {
+    if (typeof type !== 'string') {
       return helpers.createNewInstance(type, props);
     }
     return { type, props, children };
-  }
-}
-
-export default new React();
+  },
+};
