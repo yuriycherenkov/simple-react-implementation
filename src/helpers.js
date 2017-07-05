@@ -10,7 +10,6 @@ export const createNewInstance = (NewObj, props = {}, id = `react-id-${uniqid()}
   newInstance.props.id = id;
 
   const newObj = Object.assign({}, newInstance.render(), { id: newInstance.props.id });
-  // console.log('new object ', newObj);
   return newObj;
 };
 

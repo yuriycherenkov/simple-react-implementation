@@ -1,9 +1,6 @@
 import _ from 'lodash';
 
-const uniqid = require('uniqid');
-
 let VDom = {};
-// `react-id-${uniqid()}`
 
 const handleProps = (obj, element) => {
   Object.keys(obj.props).map((key) => {
@@ -28,6 +25,8 @@ const handleProps = (obj, element) => {
 };
 
 export const render = (Obj, domElement) => {
+  let newObj;
+
   const parseVDom = (obj) => {
     const element = document.createElement(obj.type);
     if (obj.id) {
@@ -50,7 +49,6 @@ export const render = (Obj, domElement) => {
     return element;
   };
 
-  let newObj;
   const deepEqualVDom = (prewObj, currentObj) => {
     Object.keys(prewObj).forEach((key) => {
       if (key === 'props') {
@@ -77,7 +75,6 @@ export const render = (Obj, domElement) => {
           }
         } else {
           const oldElem = document.getElementById(prewObj.id);
-
           const shouldBeShown = parseVDom(currentObj);
           oldElem.parentNode.replaceChild(shouldBeShown, oldElem);
         }
@@ -98,5 +95,4 @@ export const render = (Obj, domElement) => {
     const shouldBeShown = parseVDom(Obj);
     domElement.appendChild(shouldBeShown);
   }
-  // console.log('VDom ', VDom);
 };

@@ -2,7 +2,6 @@ import Component from '../Component';
 import React from '../React';
 
 export default class Input extends Component {
-
   onChange = (e) => {
     const value = e.target.value;
     this.props.onChange(value);
