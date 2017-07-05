@@ -10,6 +10,7 @@ export default class SimpleComponent {
 
   setState = (newState) => {
     const entryPoint = document.getElementById(this.props.id);
+
     if (this.shouldComponentUpdate(newState)) {
       const newChangedState = _.merge(this.state, newState);
 
