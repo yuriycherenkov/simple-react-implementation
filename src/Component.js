@@ -16,7 +16,8 @@ export default class SimpleComponent {
   setState = (newState) => {
     const newChangedState = _merge(this.state, newState);
     const container = document.getElementById(this.id);
-    // console.log('component this ', this);
+
+    this.shouldComponentUpdate(newState);
     this.callback(this, container);
 
     return newChangedState;

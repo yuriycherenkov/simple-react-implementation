@@ -1,3 +1,6 @@
+/*
+  handle html properties, lisnteners etc.
+*/
 const handleProps = (obj, element) => {
   Object.keys(obj.props).forEach((key) => {
     if (key === 'text') {
@@ -15,6 +18,9 @@ const handleProps = (obj, element) => {
   });
 };
 
+/*
+  should be return html markup from obj
+*/
 const parseVDom = (obj) => {
   const element = document.createElement(obj.type);
   if (obj.id) {
@@ -33,14 +39,10 @@ const parseVDom = (obj) => {
   return element;
 };
 
-const checkChildRender = (obj, getRenderedVDom) => {
-  if (obj.children.length) {
-    obj.children.forEach((child, index) => {
-      obj.children[index] = getRenderedVDom(child);
-    });
-  }
-};
-
+/*
+  Deep compare of the previous and current vDom
+  and replace dom node if props or its children has been changed
+*/
 const deepEqualVDom = (prewObj, currentObj) => {
   Object.keys(prewObj).forEach((key) => {
     if (key === 'props') {
@@ -49,7 +51,6 @@ const deepEqualVDom = (prewObj, currentObj) => {
       }
       Object.keys(prewObj[key]).forEach((objKey) => {
         if (prewObj[key][objKey] !== currentObj[key][objKey]) {
-          console.log('prewObj[key][objKey] ', prewObj[key].onChange);
           (prewObj[key][objKey] = currentObj[key][objKey]);
           const oldElem = document.getElementById(prewObj.id);
           if (prewObj.type !== 'input') {
@@ -74,6 +75,17 @@ const deepEqualVDom = (prewObj, currentObj) => {
   });
 };
 
+const checkChildRender = (obj, getRenderedVDom) => {
+  if (obj.children.length) {
+    obj.children.forEach((child, index) => {
+      obj.children[index] = getRenderedVDom(child);
+    });
+  }
+};
+
+/*
+  should be return result of method execution render if it is instance
+*/
 const getRenderedVDom = (obj) => {
   if (obj.render) {
     const newObj = Object.assign({}, obj.render(), { id: obj.id });
@@ -85,12 +97,11 @@ const getRenderedVDom = (obj) => {
 };
 
 let prevVDOm = null;
-export const render = (Obj, domElement) => {
-
+export default (Obj, domElement) => {
   const rebuildDom = (object, domElem) => {
     const newDomElem = document.createElement('div');
-    const currVDom = getRenderedVDom(object);
 
+    const currVDom = getRenderedVDom(object);
     const shouldBeShown = parseVDom(currVDom);
 
     if (!prevVDOm) {

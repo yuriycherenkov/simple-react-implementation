@@ -1,6 +1,6 @@
 import Component from './Component';
 import React from './React';
-import { render } from './render';
+import render from './render';
 
 import Button from './Components/Button';
 import Input from './Components/Input';
