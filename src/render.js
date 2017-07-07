@@ -15,6 +15,9 @@ const handleProps = (obj, element) => {
     if (key === 'value') {
       element.value = obj.props[key];
     }
+    if (key === 'defaultValue') {
+      element.setAttribute('value', obj.props[key]);
+    }
   });
 };
 
@@ -97,7 +100,7 @@ const getRenderedVDom = (obj) => {
 };
 
 let prevVDom = null;
-export default (Obj, domElement) => {
+export default (obj, domElement) => {
   const rebuildDom = (object, domElem) => {
     const newDomElem = document.createElement('div');
     const currentVDom = getRenderedVDom(object);
@@ -114,6 +117,6 @@ export default (Obj, domElement) => {
     }
   };
 
-  rebuildDom(Obj, domElement);
-  Obj.createSubscribers(rebuildDom);
+  rebuildDom(obj, domElement);
+  obj.createSubscribers(rebuildDom);
 };

@@ -1,16 +1,17 @@
 import _merge from 'lodash/merge';
+import uniqid from 'uniqid';
 
 export default class SimpleComponent {
-  constructor(props = {}, id) {
+  constructor(props = {}) {
     this.state = {};
     this.props = props;
-    this.id = id;
-    this.callback = null;
+    this.id = `react-id-${uniqid()}`;
+    this.update = null;
     this.shouldComponentUpdate.bind(this);
   }
 
-  createSubscribers = (callback) => {
-    this.callback = callback;
+  createSubscribers = (update) => {
+    this.update = update;
   };
 
   setState = (newState) => {
@@ -18,7 +19,7 @@ export default class SimpleComponent {
     const container = document.getElementById(this.id);
 
     this.shouldComponentUpdate(newState);
-    this.callback(this, container);
+    this.update(this.render(), container);
 
     return newChangedState;
   };

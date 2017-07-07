@@ -1,9 +1,5 @@
-const uniqid = require('uniqid');
-
 const createNewInstance = (NewObj, props = {}) => {
-  const newID = `react-id-${uniqid()}`;
-  const newInstance = new NewObj(props, newID);
-
+  const newInstance = new NewObj(props);
   newInstance.props = props;
   return newInstance;
 };

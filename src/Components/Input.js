@@ -19,6 +19,7 @@ export default class Input extends Component {
       React.createElement('input', {
         onChange: this.onChange,
         value: this.props.value,
+        defaultValue: this.props.value,
       })
     );
   }
