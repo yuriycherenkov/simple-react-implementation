@@ -10,7 +10,7 @@ export default class SimpleComponent {
     this.shouldComponentUpdate.bind(this);
   }
 
-  createSubscribers = (update) => {
+  updater = (update) => {
     this.update = update;
   };
 

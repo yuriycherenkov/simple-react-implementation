@@ -118,5 +118,5 @@ export default (obj, domElement) => {
   };
 
   rebuildDom(obj, domElement);
-  obj.createSubscribers(rebuildDom);
+  obj.updater(rebuildDom);
 };
