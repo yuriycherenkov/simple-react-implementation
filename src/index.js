@@ -11,10 +11,7 @@ class App extends Component {
     super(props, id);
     this.state = {
       value: 'test',
-      listItems: [
-        'first',
-        'second',
-      ],
+      listItems: ['first', 'second'],
     };
   }
 

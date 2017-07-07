@@ -5,7 +5,9 @@ export const createNewInstance = (NewObj, props = {}) => {
   const newInstance = new NewObj(props, newID);
 
   newInstance.props = props;
-  const newObj = Object.assign({}, newInstance.render(), { id: newID });
-  return newObj;
+  newInstance.linkToClass = NewObj;
+  // console.log('new instance', newInstance);
+
+  return newInstance;
 };
 
