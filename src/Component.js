@@ -21,7 +21,7 @@ export default class SimpleComponent {
     this.callback(this, container);
 
     return newChangedState;
-  }
+  };
 
   shouldComponentUpdate() {
     return true;

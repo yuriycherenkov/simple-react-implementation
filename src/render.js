@@ -84,7 +84,7 @@ const checkChildRender = (obj, getRenderedVDom) => {
 };
 
 /*
-  should be return result of method execution render if it is instance
+  should be return result of method execution render if it is an instance
 */
 const getRenderedVDom = (obj) => {
   if (obj.render) {
@@ -96,22 +96,21 @@ const getRenderedVDom = (obj) => {
   return obj;
 };
 
-let prevVDOm = null;
+let prevVDom = null;
 export default (Obj, domElement) => {
   const rebuildDom = (object, domElem) => {
     const newDomElem = document.createElement('div');
+    const currentVDom = getRenderedVDom(object);
+    const shouldBeShown = parseVDom(currentVDom);
 
-    const currVDom = getRenderedVDom(object);
-    const shouldBeShown = parseVDom(currVDom);
-
-    if (!prevVDOm) {
+    if (!prevVDom) {
       domElem.appendChild(newDomElem);
       newDomElem.parentNode.replaceChild(shouldBeShown, newDomElem);
 
-      prevVDOm = Object.assign({}, currVDom);
+      prevVDom = Object.assign({}, currentVDom);
     } else {
-      deepEqualVDom(prevVDOm, currVDom);
-      prevVDOm = Object.assign({}, currVDom);
+      deepEqualVDom(prevVDom, currentVDom);
+      prevVDom = Object.assign({}, currentVDom);
     }
   };
 
