@@ -7,8 +7,8 @@ import Input from './Components/Input';
 import List from './Components/List';
 
 class App extends Component {
-  constructor(props, id) {
-    super(props, id);
+  constructor(props) {
+    super(props);
     this.state = {
       value: 'test',
       listItems: ['first', 'second'],
@@ -35,7 +35,7 @@ class App extends Component {
 
   render() {
     return (
-      React.createElement('div', { },
+      React.createElement('div', {},
         React.createElement(Input,
           { onSubmit: this.onSubmit,
             onChange: this.onChange,
@@ -50,7 +50,6 @@ class App extends Component {
       )
     );
   }
-
 }
 
 const appRoot = document.getElementById('root');

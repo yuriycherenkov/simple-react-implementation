@@ -29,6 +29,6 @@ export default class SimpleComponent {
     return true;
   }
 
-  render() { throw new Error('render methos must be implemented'); }
+  render() { throw new Error('render method must be implemented'); }
 }
 

@@ -9,6 +9,7 @@ const checkAndAddHandler = (element, handler, func) => {
   handle html properties, lisnteners etc.
 */
 const handleProps = (obj, element) => {
+  // console.log('parse obj ', obj);
   Object.keys(obj.props).forEach((key) => {
     if (key === 'text') {
       element.textContent = obj.props[key];
@@ -36,14 +37,13 @@ const parseVDom = (obj) => {
   if (obj.id) {
     element.id = obj.id;
   }
-  if (obj.children) {
+
+  if (obj.children.length) {
     handleProps(obj, element);
-    obj.children
-      .map(parseVDom)
-      .forEach(element.appendChild.bind(element));
+    obj.children.forEach(child =>
+      element.appendChild(parseVDom(child)));
   } else {
-    obj.map(parseVDom)
-      .forEach(element.appendChild.bind(element));
+    handleProps(obj, element);
   }
   return element;
 };
@@ -109,7 +109,6 @@ export default (obj, domElement) => {
     if (!prevVDom) {
       domElem.appendChild(newDomElem);
       newDomElem.parentNode.replaceChild(shouldBeShown, newDomElem);
-
       prevVDom = Object.assign({}, currentVDom);
     } else {
       deepEqualVDom(prevVDom, currentVDom);
