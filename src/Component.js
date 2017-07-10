@@ -15,14 +15,10 @@ export default class SimpleComponent {
   };
 
   setState = (newState) => {
-    const newChangedState = _merge(this.state, newState);
-    const container = document.getElementById(this.id);
+    this.state = _merge(this.state, newState);
     const renderedInstance = Object.assign({}, this.render(), { linkToInstance: this });
-
     this.shouldComponentUpdate(newState);
-    this.subscribers.forEach(update => update(renderedInstance, container));
-
-    return newChangedState;
+    this.subscribers.forEach(update => update(renderedInstance));
   };
 
   shouldComponentUpdate() {

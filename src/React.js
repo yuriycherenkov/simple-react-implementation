@@ -1,6 +1,5 @@
-const createNewInstance = (NewObj, props = {}) => {
+const createNewInstance = (NewObj, props) => {
   const newInstance = new NewObj(props);
-  newInstance.props = props;
   return Object.assign({}, newInstance.render(), { linkToInstance: newInstance });
 };
 

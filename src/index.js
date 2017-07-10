@@ -20,10 +20,6 @@ class App extends Component {
     return true;
   }
 
-  onChange = (value) => {
-    this.setState({ value });
-  };
-
   onSubmit = () => {
     if (this.state.value) {
       this.setState({
@@ -33,12 +29,16 @@ class App extends Component {
     }
   };
 
+  inputOnChange = (value) => {
+    this.setState({ value });
+  };
+
   render() {
     return (
       React.createElement('div', {},
         React.createElement(Input,
           { onSubmit: this.onSubmit,
-            onChange: this.onChange,
+            onChange: this.inputOnChange,
             value: this.state.value,
           }),
         React.createElement(Button, {
