@@ -6,20 +6,21 @@ export default class SimpleComponent {
     this.state = {};
     this.props = props;
     this.id = `react-id-${uniqid()}`;
-    this.update = null;
+    this.subscribers = [];
     this.shouldComponentUpdate.bind(this);
   }
 
-  updater = (update) => {
-    this.update = update;
+  updater = (subscriber) => {
+    this.subscribers.push(subscriber);
   };
 
   setState = (newState) => {
     const newChangedState = _merge(this.state, newState);
     const container = document.getElementById(this.id);
+    const renderedInstance = Object.assign({}, this.render(), { linkToInstance: this });
 
     this.shouldComponentUpdate(newState);
-    this.update(this.render(), container);
+    this.subscribers.forEach(update => update(renderedInstance, container));
 
     return newChangedState;
   };
@@ -28,6 +29,6 @@ export default class SimpleComponent {
     return true;
   }
 
-  render() {}
+  render() { throw new Error('render methos must be implemented'); }
 }
 

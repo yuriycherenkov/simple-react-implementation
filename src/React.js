@@ -1,7 +1,7 @@
 const createNewInstance = (NewObj, props = {}) => {
   const newInstance = new NewObj(props);
   newInstance.props = props;
-  return newInstance;
+  return Object.assign({}, newInstance.render(), { linkToInstance: newInstance });
 };
 
 export default {

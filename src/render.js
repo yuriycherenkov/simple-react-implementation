@@ -1,3 +1,10 @@
+const checkAndAddHandler = (element, handler, func) => {
+  if (/on/.test(handler)) {
+    const htmlHandler = handler.substring(2).toLowerCase();
+    element.addEventListener(htmlHandler, func);
+  }
+};
+
 /*
   handle html properties, lisnteners etc.
 */
@@ -6,17 +13,17 @@ const handleProps = (obj, element) => {
     if (key === 'text') {
       element.textContent = obj.props[key];
     }
-    if (key === 'onChange') {
-      element.addEventListener('keyup', obj.props[key]);
-    }
-    if (key === 'onClick') {
-      element.addEventListener('click', obj.props[key]);
-    }
     if (key === 'value') {
       element.value = obj.props[key];
     }
     if (key === 'defaultValue') {
       element.setAttribute('value', obj.props[key]);
+    }
+
+    if (key === 'onChange') {
+      element.addEventListener('keyup', obj.props[key]);
+    } else {
+      checkAndAddHandler(element, key, obj.props[key]);
     }
   });
 };
@@ -35,8 +42,7 @@ const parseVDom = (obj) => {
       .map(parseVDom)
       .forEach(element.appendChild.bind(element));
   } else {
-    obj
-      .map(parseVDom)
+    obj.map(parseVDom)
       .forEach(element.appendChild.bind(element));
   }
   return element;
@@ -57,7 +63,8 @@ const deepEqualVDom = (prewObj, currentObj) => {
           (prewObj[key][objKey] = currentObj[key][objKey]);
           const oldElem = document.getElementById(prewObj.id);
           if (prewObj.type !== 'input') {
-            oldElem.parentNode.replaceChild(parseVDom(currentObj), oldElem);
+            const shouldBeShown = parseVDom(currentObj);
+            oldElem.parentNode.replaceChild(shouldBeShown, oldElem);
           } else {
             oldElem.value = currentObj[key].value;
           }
@@ -78,25 +85,18 @@ const deepEqualVDom = (prewObj, currentObj) => {
   });
 };
 
-const checkChildRender = (obj, getRenderedVDom) => {
+/*
+  should be return result of method execution render
+*/
+const getRenderedVDom = (obj) => {
+  const newObj = Object.assign({}, obj, { id: obj.linkToInstance.id });
+
   if (obj.children.length) {
     obj.children.forEach((child, index) => {
       obj.children[index] = getRenderedVDom(child);
     });
   }
-};
-
-/*
-  should be return result of method execution render if it is an instance
-*/
-const getRenderedVDom = (obj) => {
-  if (obj.render) {
-    const newObj = Object.assign({}, obj.render(), { id: obj.id });
-    checkChildRender(newObj, getRenderedVDom);
-    return newObj;
-  }
-  checkChildRender(obj, getRenderedVDom);
-  return obj;
+  return newObj;
 };
 
 let prevVDom = null;
@@ -118,5 +118,5 @@ export default (obj, domElement) => {
   };
 
   rebuildDom(obj, domElement);
-  obj.updater(rebuildDom);
+  obj.linkToInstance.updater(rebuildDom);
 };
