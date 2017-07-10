@@ -2,7 +2,7 @@ import _merge from 'lodash/merge';
 import uniqid from 'uniqid';
 
 export default class SimpleComponent {
-  constructor(props = {}) {
+  constructor(props) {
     this.state = {};
     this.props = props;
     this.id = `react-id-${uniqid()}`;

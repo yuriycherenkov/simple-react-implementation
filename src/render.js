@@ -1,5 +1,5 @@
 const checkAndAddHandler = (element, handler, func) => {
-  if (/on/.test(handler)) {
+  if (/on{0,1}/.test(handler)) {
     const htmlHandler = handler.substring(2).toLowerCase();
     element.addEventListener(htmlHandler, func);
   }
@@ -9,7 +9,6 @@ const checkAndAddHandler = (element, handler, func) => {
   handle html properties, lisnteners etc.
 */
 const handleProps = (obj, element) => {
-  // console.log('parse obj ', obj);
   Object.keys(obj.props).forEach((key) => {
     if (key === 'text') {
       element.textContent = obj.props[key];
@@ -34,9 +33,7 @@ const handleProps = (obj, element) => {
 */
 const parseVDom = (obj) => {
   const element = document.createElement(obj.type);
-  if (obj.id) {
-    element.id = obj.id;
-  }
+  element.id = obj.id;
 
   if (obj.children.length) {
     handleProps(obj, element);
