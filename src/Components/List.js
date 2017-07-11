@@ -1,5 +1,4 @@
-import Component from '../Component';
-import React from '../React';
+import React, { Component } from '../React';
 
 import ListItem from './ListItem';
 

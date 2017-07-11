@@ -1,7 +1,5 @@
-import Component from './Component';
-import React from './React';
+import React, { Component } from './React';
 import render from './render';
-
 import Button from './Components/Button';
 import Input from './Components/Input';
 import List from './Components/List';

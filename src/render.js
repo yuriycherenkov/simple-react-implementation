@@ -33,15 +33,11 @@ const handleProps = (obj, element) => {
 */
 const parseVDom = (obj) => {
   const element = document.createElement(obj.type);
-  element.id = obj.id;
+  element.id = obj.linkToInstance.id;
+  handleProps(obj, element);
 
-  if (obj.children.length) {
-    handleProps(obj, element);
-    obj.children.forEach(child =>
-      element.appendChild(parseVDom(child)));
-  } else {
-    handleProps(obj, element);
-  }
+  obj.children.forEach(child =>
+    element.appendChild(parseVDom(child)));
   return element;
 };
 
@@ -52,13 +48,11 @@ const parseVDom = (obj) => {
 const deepEqualVDom = (prewObj, currentObj) => {
   Object.keys(prewObj).forEach((key) => {
     if (key === 'props') {
-      if (currentObj.id && prewObj.id) {
-        currentObj.id = prewObj.id;
-      }
+      currentObj.linkToInstance.id = prewObj.linkToInstance.id;
+
       Object.keys(prewObj[key]).forEach((objKey) => {
         if (prewObj[key][objKey] !== currentObj[key][objKey]) {
-          (prewObj[key][objKey] = currentObj[key][objKey]);
-          const oldElem = document.getElementById(prewObj.id);
+          const oldElem = document.getElementById(prewObj.linkToInstance.id);
           if (prewObj.type !== 'input') {
             const shouldBeShown = parseVDom(currentObj);
             oldElem.parentNode.replaceChild(shouldBeShown, oldElem);
@@ -75,7 +69,7 @@ const deepEqualVDom = (prewObj, currentObj) => {
           deepEqualVDom(prewObj[key][i], currentObj[key][i]);
         }
       } else {
-        const oldElem = document.getElementById(prewObj.id);
+        const oldElem = document.getElementById(prewObj.linkToInstance.id);
         oldElem.parentNode.replaceChild(parseVDom(currentObj), oldElem);
       }
     }
@@ -86,33 +80,26 @@ const deepEqualVDom = (prewObj, currentObj) => {
   should be return result of method execution render
 */
 const getRenderedVDom = (obj) => {
-  const newObj = Object.assign({}, obj, { id: obj.linkToInstance.id });
-
-  if (obj.children.length) {
-    obj.children.forEach((child, index) => {
-      obj.children[index] = getRenderedVDom(child);
-    });
-  }
-  return newObj;
+  obj.children.forEach((child, index) => {
+    obj.children[index] = getRenderedVDom(child);
+  });
+  return obj;
 };
 
 let prevVDom = null;
 export default (obj, domElement) => {
-  const rebuildDom = (object, domElem) => {
-    const newDomElem = document.createElement('div');
+  const rebuildDom = (object) => {
     const currentVDom = getRenderedVDom(object);
     const shouldBeShown = parseVDom(currentVDom);
 
     if (!prevVDom) {
-      domElem.appendChild(newDomElem);
-      newDomElem.parentNode.replaceChild(shouldBeShown, newDomElem);
-      prevVDom = Object.assign({}, currentVDom);
+      domElement.appendChild(shouldBeShown);
     } else {
       deepEqualVDom(prevVDom, currentVDom);
-      prevVDom = Object.assign({}, currentVDom);
     }
+    prevVDom = Object.assign({}, currentVDom);
   };
 
-  rebuildDom(obj, domElement);
+  rebuildDom(obj);
   obj.linkToInstance.updater(rebuildDom);
 };

@@ -1,5 +1,4 @@
-import Component from '../Component';
-import React from '../React';
+import React, { Component } from '../React';
 
 export default class Input extends Component {
   onChange = (e) => {

@@ -1,5 +1,4 @@
-import Component from '../Component';
-import React from '../React';
+import React, { Component } from '../React';
 
 export default class Button extends Component {
   onClick = (event) => {
