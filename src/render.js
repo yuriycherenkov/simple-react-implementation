@@ -1,5 +1,5 @@
-const checkAndAddHandler = (element, handler, func) => {
-  if (/on{0,1}/.test(handler)) {
+const addOnHandler = (element, handler, func) => {
+  if (/^on/.test(handler)) {
     const htmlHandler = handler.substring(2).toLowerCase();
     element.addEventListener(htmlHandler, func);
   }
@@ -10,9 +10,6 @@ const checkAndAddHandler = (element, handler, func) => {
 */
 const handleProps = (obj, element) => {
   Object.keys(obj.props).forEach((key) => {
-    if (key === 'text') {
-      element.textContent = obj.props[key];
-    }
     if (key === 'value') {
       element.value = obj.props[key];
     }
@@ -21,9 +18,9 @@ const handleProps = (obj, element) => {
     }
 
     if (key === 'onChange') {
-      element.addEventListener('keyup', obj.props[key]);
+      element.addEventListener('input', obj.props[key]);
     } else {
-      checkAndAddHandler(element, key, obj.props[key]);
+      addOnHandler(element, key, obj.props[key]);
     }
   });
 };
@@ -32,56 +29,90 @@ const handleProps = (obj, element) => {
   should be return html markup from obj
 */
 const parseVDom = (obj) => {
-  const element = document.createElement(obj.type);
-  element.id = obj.linkToInstance.id;
-  handleProps(obj, element);
+  let element;
+  if (typeof obj !== 'string') {
+    element = document.createElement(obj.type);
+    element.id = obj.linkToInstance.id;
+    handleProps(obj, element);
 
-  obj.children.forEach(child =>
-    element.appendChild(parseVDom(child)));
+    obj.props.children.forEach((child) => {
+      if (typeof child !== 'string') {
+        element.appendChild(parseVDom(child));
+      } else {
+        element.appendChild(document.createTextNode(child));
+      }
+    });
+  }
   return element;
 };
 
 /*
   Deep compare of the previous and current vDom
-  and replace dom node if props or its children has been changed
+  and replace dom node if props or its children. has been changed
 */
 const deepEqualVDom = (prewObj, currentObj) => {
-  Object.keys(prewObj).forEach((key) => {
-    if (key === 'props') {
-      currentObj.linkToInstance.id = prewObj.linkToInstance.id;
+  if (typeof prewObj === 'string') return;
+  const prewProps = prewObj.props;
+  const currProps = currentObj.props;
+  const prevChild = prewProps.children;
+  const currChild = currProps.children;
 
-      Object.keys(prewObj[key]).forEach((objKey) => {
-        if (prewObj[key][objKey] !== currentObj[key][objKey]) {
-          const oldElem = document.getElementById(prewObj.linkToInstance.id);
-          if (prewObj.type !== 'input') {
-            const shouldBeShown = parseVDom(currentObj);
-            oldElem.parentNode.replaceChild(shouldBeShown, oldElem);
-          } else {
-            oldElem.value = currentObj[key].value;
-          }
-        }
-      });
-    }
+  currentObj.linkToInstance.id = prewObj.linkToInstance.id;
 
-    if (key === 'children') {
-      if (prewObj[key].length === currentObj[key].length) {
-        for (let i = 0; i < prewObj[key].length; i++) {
-          deepEqualVDom(prewObj[key][i], currentObj[key][i]);
-        }
+  Object.keys(prewProps).forEach((objKey) => {
+    if (prewProps[objKey] !== currProps[objKey]
+      && typeof prewProps[objKey] !== 'function'
+      && typeof prewProps[objKey] !== 'object') {
+      const oldElem = document.getElementById(prewObj.linkToInstance.id);
+      if (prewObj.type !== currentObj.type) {
+        const shouldBeShown = parseVDom(currentObj);
+        oldElem.parentNode.replaceChild(shouldBeShown, oldElem);
       } else {
-        const oldElem = document.getElementById(prewObj.linkToInstance.id);
-        oldElem.parentNode.replaceChild(parseVDom(currentObj), oldElem);
+        handleProps(currentObj, oldElem);
       }
     }
   });
+
+  if (prevChild.length === currChild.length) {
+    for (let i = 0; i < prevChild.length; i++) {
+      deepEqualVDom(prevChild[i], currChild[i]);
+    }
+  } else {
+    let smallerLength;
+    if (prevChild.length < currChild.length) {
+      smallerLength = prevChild.length;
+      // add to list
+      currChild.forEach((child, index) => {
+        if (index < smallerLength) {
+          deepEqualVDom(prevChild[index], currChild[index]);
+        } else {
+          const newElement = parseVDom(child);
+          const parentNode = document.getElementById(prewObj.linkToInstance.id);
+          parentNode.appendChild(newElement);
+        }
+      });
+    } else {
+      // remove from list
+      smallerLength = currChild.length;
+      prevChild.forEach((child, index) => {
+        if (index < smallerLength) {
+          deepEqualVDom(prevChild[index], currChild[index]);
+        } else {
+          const removedElem = parseVDom(child);
+        }
+      });
+    }
+  }
 };
 
 /*
   should be return result of method execution render
 */
 const getRenderedVDom = (obj) => {
-  obj.children.forEach((child, index) => {
-    obj.children[index] = getRenderedVDom(child);
+  obj.props.children.forEach((child, index) => {
+    if (typeof child !== 'string') {
+      obj.props.children[index] = getRenderedVDom(child);
+    }
   });
   return obj;
 };
@@ -90,9 +121,9 @@ let prevVDom = null;
 export default (obj, domElement) => {
   const rebuildDom = (object) => {
     const currentVDom = getRenderedVDom(object);
-    const shouldBeShown = parseVDom(currentVDom);
 
     if (!prevVDom) {
+      const shouldBeShown = parseVDom(currentVDom);
       domElement.appendChild(shouldBeShown);
     } else {
       deepEqualVDom(prevVDom, currentVDom);

@@ -8,7 +8,7 @@ export default class Button extends Component {
 
   render() {
     return (
-      React.createElement('button', { text: 'submit', onClick: this.onClick })
+      React.createElement('button', { onClick: this.onClick }, 'submit')
     );
   }
 }

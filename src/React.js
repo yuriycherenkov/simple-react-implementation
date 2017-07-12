@@ -29,11 +29,19 @@ export class Component {
 }
 
 export default {
-  createElement: (Type, props = {}, ...children) => {
+  createElement: (Type, config = {}, ...children) => {
+    const props = {};
     if (typeof Type !== 'string') {
-      const instance = new Type(props);
+      const instance = new Type(config);
       return { ...instance.render(), linkToInstance: instance };
     }
-    return { type: Type, props, children };
+    for (const propName in config) {
+      if (Object.prototype.hasOwnProperty.call(config, propName)) {
+        props[propName] = config[propName];
+      }
+    }
+
+    props.children = children;
+    return { type: Type, props };
   },
 };

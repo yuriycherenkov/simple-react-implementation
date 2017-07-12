@@ -34,22 +34,18 @@ class App extends Component {
   render() {
     return (
       React.createElement('div', {},
-        React.createElement(Input,
-          { onSubmit: this.onSubmit,
-            onChange: this.inputOnChange,
-            value: this.state.value,
-          }),
-        React.createElement(Button, {
-          onSubmit: this.onSubmit,
-        }),
-        React.createElement(List, {
-          listItems: this.state.listItems,
-        }),
+        <Input
+          onSubmit={this.onSubmit}
+          onChange={this.inputOnChange}
+          value={this.state.value}
+        />,
+        <Button onSubmit={this.onSubmit} />,
+        <List listItems={this.state.listItems} />,
       )
     );
   }
 }
 
 const appRoot = document.getElementById('root');
-render(React.createElement(App), appRoot);
+render(<App />, appRoot);
 
