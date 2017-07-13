@@ -4,9 +4,10 @@ import ListItem from './ListItem';
 
 export default class List extends Component {
   render() {
-    return React.createElement('ul', {},
-      ...this.props.listItems.map(item =>
-        <ListItem item={item} />),
+    return (
+      <ul>{this.props.listItems.map(item => (
+          <ListItem item={item} />
+      ))}</ul>
     );
   }
 }

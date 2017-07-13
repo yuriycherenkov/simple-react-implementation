@@ -32,6 +32,7 @@ const parseVDom = (obj) => {
   let element;
   if (typeof obj !== 'string') {
     element = document.createElement(obj.type);
+
     element.id = obj.linkToInstance.id;
     handleProps(obj, element);
 
@@ -79,7 +80,7 @@ const deepEqualVDom = (prewObj, currentObj) => {
     }
   } else {
     let smallerLength;
-    if (prevChild.length < currChild.length) {
+    if (prevChild.length < currChild.length) {      
       smallerLength = prevChild.length;
       // add to list
       currChild.forEach((child, index) => {
@@ -93,11 +94,10 @@ const deepEqualVDom = (prewObj, currentObj) => {
       });
     } else {
       // remove from list
+      // TODO fix remove from list
       smallerLength = currChild.length;
       prevChild.forEach((child, index) => {
-        if (index < smallerLength) {
-          deepEqualVDom(prevChild[index], currChild[index]);
-        } else {
+        if (index > smallerLength) {
           const removedElem = parseVDom(child);
         }
       });
@@ -121,7 +121,6 @@ let prevVDom = null;
 export default (obj, domElement) => {
   const rebuildDom = (object) => {
     const currentVDom = getRenderedVDom(object);
-
     if (!prevVDom) {
       const shouldBeShown = parseVDom(currentVDom);
       domElement.appendChild(shouldBeShown);

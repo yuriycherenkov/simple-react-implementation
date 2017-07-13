@@ -13,11 +13,6 @@ class App extends Component {
     };
   }
 
-  shouldComponentUpdate(nextState) {
-    // console.log('nextState ', nextState);
-    return true;
-  }
-
   onSubmit = () => {
     if (this.state.value) {
       this.setState({
@@ -33,15 +28,15 @@ class App extends Component {
 
   render() {
     return (
-      React.createElement('div', {},
+      <div>
         <Input
           onSubmit={this.onSubmit}
           onChange={this.inputOnChange}
           value={this.state.value}
-        />,
-        <Button onSubmit={this.onSubmit} />,
-        <List listItems={this.state.listItems} />,
-      )
+        />
+        <Button onSubmit={this.onSubmit} />
+        <List listItems={this.state.listItems} />
+      </div>
     );
   }
 }
